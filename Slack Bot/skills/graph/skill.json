@@ -1,0 +1,6 @@
+{
+	"name": "graph",
+	"description": "Display resource information in a visual format",
+	"version": "1.0.0",
+	"invoke": "graph.py"
+}

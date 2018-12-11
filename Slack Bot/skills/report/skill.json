@@ -1,0 +1,6 @@
+{
+	"name": "report",
+	"description": "Report information about BPC resources",
+	"version": "1.0.0",
+	"invoke": "report.py"
+}

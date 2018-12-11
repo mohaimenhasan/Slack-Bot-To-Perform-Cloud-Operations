@@ -1,0 +1,6 @@
+{
+	"name": "deploy",
+	"description": "Deploy a BAM or BDDS to BPC",
+	"version": "1.0.0",
+	"invoke": "deploy.py"
+}

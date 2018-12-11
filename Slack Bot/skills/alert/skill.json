@@ -1,0 +1,6 @@
+{
+	"name": "alert",
+	"description": "Repeating alert about the user's VMs",
+	"version": "1.0.0",
+	"invoke": "alert.py"
+}

@@ -1,0 +1,6 @@
+{
+	"name": "who",
+	"description": "Find out who owns a specific VM",
+	"version": "1.0.0",
+	"invoke": "who.py"
+}
