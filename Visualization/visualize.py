@@ -38,52 +38,55 @@ class DSObject():
         Create the visualization
         :return:
         """
-        
-        # text and graph part
-        dsname = self.info[0]['Datastore name']
-        capacity = self.info[0]['Capacity']
-        provisioned_space = self.info[0]['Provisioned space']
-        free_space = self.info[0]['Free space']
-        fsp = self.info[0]['Free space percentage']
-        
-        free_space_per = float(fsp[:-1])
-        used = 100 - free_space_per
 
-        app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-        
-        app.layout = html.Div(children=[
-            html.H1(children='Datastore Properties'),
-                                        
-            html.Div(children='''
-            Dash: A dashboard of datastores.
-            '''),
-                                        
-            dcc.Graph(
-                      id='example-graph',
-                      figure={
-                      'layout': {
-                      'title': 'Datastore: ' + dsname + ", Capacity: " + capacity + ", Provisioned Space " + provisioned_space + ", Free Space: " + free_space,
-                      'margin': {
-                      'l': 50,
-                      'r': 50,
-                      'b': 100,
-                      't': 100
-                      }
-                      
-                      },
-                      'data': [
-                               {
-                               'values': [free_space_per, used],
-                               'labels': ['free', 'used'],
-                               'type': 'pie'
-                               }
-                            ]
-                      
-                      
-                      }
-                    )
-                ])
-        app.run_server(host='10.244.105.32', port=9999, debug=True)
+        labels = ['Used', 'Free']
+        str = self.info[0]['Free space percentage']
+        free = float(str[:-1])
+        used = 100 - free
+        dsname = self.info[0]['Datastore name']
+
+        values = [used, free]
+        """
+        # create trace
+        trace = go.Pie(labels=labels, values=values, name="Datastore Information for " + dsname)
+        # pack data
+        data = [trace]
+        plo.plot(data, filename='simple_pie.html')
+        print("success!")
+        """
+        trace = go.Pie(labels=labels, values=values, name="Datastore Information for " + dsname)
+        trace1 = go.Scatter(
+            x=[0, 1, 2, 3, 4, 5, 6, 7, 8],
+            y=[0, 1, 2, 3, 4, 5, 6, 7, 8],
+            name='Name of Trace 1'
+        )
+        trace2 = go.Scatter(
+            x=[0, 1, 2, 3, 4, 5, 6, 7, 8],
+            y=[1, 0, 3, 2, 5, 4, 7, 6, 8],
+            name='Name of Trace 2'
+        )
+        data = [trace, trace1, trace2]
+        layout = go.Layout(
+            title='Datastore information',
+            xaxis=dict(
+                title='x Axis',
+                titlefont=dict(
+                    family='Courier New, monospace',
+                    size=18,
+                    color='#7f7f7f'
+                )
+            ),
+            yaxis=dict(
+                title='y Axis',
+                titlefont=dict(
+                    family='Courier New, monospace',
+                    size=18,
+                    color='#7f7f7f'
+                )
+            )
+        )
+        fig = go.Figure(data=data, layout=layout)
+        plo.plot(fig, filename='simple_pie.html')
 
 
 class DSObjectList():
@@ -108,7 +111,7 @@ class DSObjectList():
         children = list()
         title = html.H1(children='Datastore Properties')
         desc = html.Div(children='''
-                Dash: A dashboard of datastores.
+                Dash: A web application framework for Python.
             ''')
         children.append(title)
         children.append(desc)
@@ -132,18 +135,11 @@ class DSObjectList():
                     'data': [
                         {
                             'values': [free_space_per, used],
-                             'labels': ['free', 'used'],
                             'type': 'pie'
                         }
                     ],
                     'layout': {
-                        'title': 'Datastore: ' + dsname + ", Capacity: " + capacity + ", Provisioned Space " + provisioned_space + ", Free Space: " + free_space,
-                        'margin': {
-                              'l': 50,
-                              'r': 50,
-                              'b': 100,
-                              't': 100
-                              }
+                        'title': 'Datastore: ' + dsname + " Cap: " + capacity + "ProvSpace " + provisioned_space
 
                     }
                 }
@@ -151,10 +147,10 @@ class DSObjectList():
             children.append(graph)
 
         app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
+        print("BEFORE RUN SERVER")
         app.layout = html.Div(children=children)
-        app.run_server(host='10.244.105.32', port=9999,debug=True)
-
+        app.run_server(debug=True)
+        print("AFTER RUN SERVER")
 class VMPropObject():
     """
     A single VM's properties object
@@ -170,96 +166,6 @@ class VMPropObject():
         Create the visualization
         :return:
         """
-            # text and graph part
-        name = self.info[0]['Name']
-        last_booted = self.info[0]['Last Booted On']
-        res_cpu = self.info[0]['Reserved CPU']
-        mem_use = self.info[0]['Current Memory Usage']
-        mem = float((mem_use.split())[0])
-        guest_os = self.info[0]['Guest OS']
-        ds_free = self.info[0]['DS Free Space']
-        total_mem = self.info[0]['Total Memory']
-        powerstate = self.info[0]['Powerstate']
-        uuid = self.info[0]['UUID']
-        ds_cap = self.info[0]['DS Capacity']
-        cpu_use = self.info[0]['Current CPU Usage']
-        curr_cpu_use = int((cpu_use.split())[0])
-        ds_free_per = self.info[0]['DS Free Percentage']
-        host = self.info[0]['Host']
-        path = self.info[0]['Path to VM']
-        dsname = self.info[0]['Datastore Name']
-            
-            # networks = self.info[0]['VM Networks']
-            
-        free_space_per = float(ds_free_per[:-1])
-        used = 100 - free_space_per
-        
-        
-        app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-                                            
-        app.layout = html.Div(children=[
-        html.H1(children='Virtual Machine Properties'),
-                                        
-        html.Div(children='''
-                Dash: Properties of a single VM.
-                '''),
-                                        
-        dcc.Markdown("""
-            VM Properties:
-            ------------------------
-            VM Name: {}
-            Last booted: {}
-            Reserved CPU: {}
-            Current memory usage: {}
-            Guest OS: {} 
-            DS Free Space: {}
-            Total Memory: {} 
-            Powerstate: {}
-            UUID: {}
-            DS Capacity: {}
-            Current CPU Usage: {}
-            DS Free Percentage: {}
-            Host: {}
-            Path to VM: {}
-            Datastore name: {}
-                    """.format(name, last_booted, res_cpu, mem_use, guest_os, ds_free, total_mem, powerstate, uuid, ds_cap, cpu_use, ds_free_per, host, path, dsname)),
-                                                                            
-        dcc.Graph(
-                          id='vm-single-graph',
-                          figure={
-                            'data': [
-                             {
-                             'values': [free_space_per, used],
-                            'labels': ['free', 'used'],
-                            
-                            'type': 'pie'
-                            }
-                            ],
-                                                                                      
-                        'layout': {
-                        'title': 'Free vs.Used space for Datastore: ' + dsname,
-                  'legend': {'x': 0, 'y': 1}
-                  
-                  
-                  }
-                  
-                            }
-                        ),
-        dcc. Graph(
-                        id='vm-single-graph2',
-                           figure={
-                           'data': [
-                                    {'x': ["CPU (in MHz)", "Memory (in MB)"], 'y': [curr_cpu_use, mem], 'type': 'bar', 'name': 'CPU & Mem'},
-                                    
-                           ]
-                           }
-                        )
-                        ])
-        app.run_server(host='10.244.105.32', port=9999, debug=True)
-    
-
-
-
 
 
 class VMPropObjectList():
@@ -277,95 +183,29 @@ class VMPropObjectList():
         Create the visualization
         :return:
         """
-        # text: 'Datastore name', 'Capacity', 'Provisioned space', 'Free space',
-        # graph: free space %
-        # this is the list of children that will go into the app layout
-        children = list()
-        title = html.H1(children='VM Properties')
-        desc = html.Div(children='''
-                    Dash: A dashboard of VM Properties.
-                        ''')
-        children.append(title)
-        children.append(desc)
-        n = 0
-        for obj in self.info:
-            # text and graph info
-            # text and graph part
-            name = self.info[0]['Name']
-            last_booted = self.info[0]['Last Booted On']
-            res_cpu = self.info[0]['Reserved CPU']
-            mem_use = self.info[0]['Current Memory Usage']
-            mem = float((mem_use.split())[0])
-            guest_os = self.info[0]['Guest OS']
-            ds_free = self.info[0]['DS Free Space']
-            total_mem = self.info[0]['Total Memory']
-            powerstate = self.info[0]['Powerstate']
-            uuid = self.info[0]['UUID']
-            ds_cap = self.info[0]['DS Capacity']
-            cpu_use = self.info[0]['Current CPU Usage']
-            curr_cpu_use = int((cpu_use.split())[0])
-            ds_free_per = self.info[0]['DS Free Percentage']
-            host = self.info[0]['Host']
-            path = self.info[0]['Path to VM']
-            dsname = self.info[0]['Datastore Name']
-            
-            free_space_per = float(ds_free_per[:-1])
-            used = 100 - free_space_per
 
-            temp = n
-            n += 1
-            temp = str(temp)
-            
-            text = dcc.Markdown("""
-                VM Properties:
-                ------------------------
-                VM Name: {}
-                Last booted: {}
-                Reserved CPU: {}
-                Current memory usage: {}
-                Guest OS: {}
-                DS Free Space: {}
-                Total Memory: {}
-                Powerstate: {}
-                UUID: {}
-                DS Capacity: {}
-                Current CPU Usage: {}
-                DS Free Percentage: {}
-                Host: {}
-                Path to VM: {}
-                Datastore name: {}
-                """.format(name, last_booted, res_cpu, mem_use, guest_os, ds_free, total_mem, powerstate, uuid, ds_cap, cpu_use, ds_free_per, host, path, dsname))
-            children.append(text)
-            
-            graph = dcc.Graph(
-                        id='vm-single-graph'+temp,
-                            figure={
-                                'data': [
-                                    {
-                                               'values': [free_space_per, used],
-                                               'labels': ['free', 'used'],
-                                               
-                                               'type': 'pie'
-                                               }
-                                               ],
-                                      
-                                      'layout': {
-                                      'title': 'Free vs.Used space for Datastore: ' + dsname,
-                                      'legend': {'x': 0, 'y': 1}
-                                      
-                                      
-                                      }
-                                      
-                                      }
-                                      )
-            children.append(graph)
-                                                                                            
         app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-                                                                                                
-        app.layout = html.Div(children=children)
-        app.run_server(host='10.244.105.32', port=9999, debug=True)
 
+        app.layout = html.Div(children=[
+            html.H1(children='Hello Dash'),
 
+            html.Div(children='''
+                Dash: A web application framework for Python.
+            '''),
+
+            dcc.Graph(
+                id='example-graph',
+                figure={
+                    'data': [
+                        {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
+                        {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+                    ],
+                    'layout': {
+                        'title': 'Dash Data Visualization'
+                    }
+                }
+            )
+        ])
 
 
 class BundleObject():
@@ -373,10 +213,8 @@ class BundleObject():
     A Bundle Object is the classification of BPC data input received by this script.
     """
 
-    DSOBJECT_KEYS = 'Datastore name'
-    #['Datastore name', 'Capacity', 'Provisioned space', 'Free space', 'Free space percentage']
-    VMPROPERTIESOBJ_KEYS = 'Name'
-    #['Name', 'Last Booted On', 'Reserved CPU', 'Current Memory Usage', 'Guest OS', 'DS Free Space', 'Total Memory', 'Powerstate', 'UUID', 'DS Capacity', 'Current CPU Usage', 'DS Free Percentage', 'Host', 'Path to VM', 'Datastore Name']
+    DSOBJECT_KEYS = ['Datastore name', 'Capacity', 'Provisioned space', 'Free space', 'Free space percentage']
+    VMPROPERTIESOBJ_KEYS = ['Name', 'UUID', 'MemoryMB', 'DS_name', 'DS_capacity', 'DS_freespace']
 
     def __init__(self, bundle_args):
         """
@@ -404,23 +242,20 @@ class BundleObject():
         """
 
         try:
-            
-            if BundleObject.DSOBJECT_KEYS in str(self.data[0].keys()):
+
+            if str(self.data[0].keys()).__eq__(BundleObject.DSOBJECT_KEYS):
                 if len(self.data) == 1:
                     d = DSObject(self.data)
-                    
                     return d
                 else:
                     d = DSObjectList(self.data)
                     return d
 
-            elif BundleObject.VMPROPERTIESOBJ_KEYS in str(self.data[0].keys()):
+            elif str(self.data[0].keys()) == BundleObject.VMPROPERTIESOBJ_KEYS:
                 if len(self.data) == 1:
-                    v = VMPropObject(self.data)
-                    return v
+                    return VMPropObject
                 else:
-                    v = VMPropObjectList(self.data)
-                    return v
+                    return VMPropObjectList
 
         except IOError:
             raise RuntimeError("IO Error find input type")
@@ -435,11 +270,9 @@ def main():
     args = parser.parse_args()
 
     data_input = BundleObject(args.b)
-    
     data_obj_type = data_input.find_input_type()
 
     data_obj_type.visualize()
 
 if __name__ == "__main__":
     main()
-

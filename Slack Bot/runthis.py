@@ -72,6 +72,8 @@ def handle_command(channel, command):
 
 def handle_skill(skill, args):
     try:
+        if skill == 'help':
+            slack_client.api_call("chat.postMessage", channel=args["channel"], as_user=False, text="Hey I am WALL-E! I can help you with BPC. Use `report` , `graph` , `deploy` , or `destroy` to interact with me")
         bot_skills[skill](args=args, slack_client=slack_client)
         return
     except KeyError as err:
@@ -193,6 +195,7 @@ def bot_eventloop():
             filtered_input = filter_input(slack_client.rtm_read())
             if filtered_input:
                 handle_skill(skill=filtered_input['skill'], args=filtered_input)
+
 
                 # print("filtered input - ", filtered_input)
                 # channel, command = parse_bot_commands(filtered_input)

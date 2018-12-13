@@ -1,0 +1,2 @@
+AS_DAEMON="-d"
+CONFIG="-c /home/ubuntu/bpcbot/bpcbot.conf"

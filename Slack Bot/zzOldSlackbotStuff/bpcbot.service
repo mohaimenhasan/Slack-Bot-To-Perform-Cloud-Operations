@@ -1,0 +1,13 @@
+[Unit]
+Description=BPCBot
+After=network.target flask.service
+
+[Service]
+#Type=forking
+KillSignal=SIGHUP
+EnvironmentFile=-/home/ubuntu/bpcbot/.yobot-env
+WorkingDirectory=/home/ubuntu/bpcbot
+ExecStart=/bin/bash -c "/home/ubuntu/bpcbot/yobotd.py ${AS_DAEMON} ${CONFIG}"
+
+[Install]
+WantedBy=multi-user.target
